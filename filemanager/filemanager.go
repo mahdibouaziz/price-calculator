@@ -2,15 +2,28 @@ package filemanager
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 )
 
-func ReadLines(filePath string) ([]string, error) {
-	file, err := os.Open(filePath)
+type FileManager struct {
+	InputFilePath  string
+	OutputFilePath string
+}
+
+func New(inputFilePath, outputFilePath string) *FileManager {
+	return &FileManager{
+		InputFilePath:  inputFilePath,
+		OutputFilePath: outputFilePath,
+	}
+}
+
+func (fm FileManager) ReadLines() ([]string, error) {
+	file, err := os.Open(fm.InputFilePath)
 	if err != nil {
-		message := fmt.Sprintf("failed to open file %v", filePath)
+		message := fmt.Sprintf("failed to open file %v", fm.InputFilePath)
 		return nil, errors.New(message)
 	}
 	defer file.Close()
@@ -22,9 +35,27 @@ func ReadLines(filePath string) ([]string, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		message := fmt.Sprintf("error scanning the content of the file %v", filePath)
+		message := fmt.Sprintf("error scanning the content of the file %v", fm.InputFilePath)
 		return nil, errors.New(message)
 	}
 
 	return lines, nil
+}
+
+func (fm FileManager) WriteResult(data any) error {
+	file, err := os.Create(fm.OutputFilePath)
+	if err != nil {
+		message := fmt.Sprintf("failed to create file %v", fm.OutputFilePath)
+		return errors.New(message)
+	}
+	defer file.Close()
+
+	encoder := json.NewEncoder(file)
+
+	err = encoder.Encode(data)
+	if err != nil {
+		return errors.New("failed to convert data to json")
+	}
+
+	return nil
 }
