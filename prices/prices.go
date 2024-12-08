@@ -4,21 +4,21 @@ import (
 	"fmt"
 
 	"github.com/mahdibouaziz/price-calculator/conversion"
-	"github.com/mahdibouaziz/price-calculator/filemanager"
+	"github.com/mahdibouaziz/price-calculator/iomanager"
 )
 
 type TaxIncludedPriceJob struct {
-	TaxRate           float64                  `json:"tax_rate"`
-	InputPrices       []float64                `json:"input_prices"`
-	TaxIncludedPrices map[string]string        `json:"tax_included_prices"`
-	IOmanager         *filemanager.FileManager `json:"-"`
+	TaxRate           float64             `json:"tax_rate"`
+	InputPrices       []float64           `json:"input_prices"`
+	TaxIncludedPrices map[string]string   `json:"tax_included_prices"`
+	IOmanager         iomanager.IOManager `json:"-"`
 }
 
-func NewTaxIncludedPriceJob(fm *filemanager.FileManager, taxRate float64) *TaxIncludedPriceJob {
+func NewTaxIncludedPriceJob(iom iomanager.IOManager, taxRate float64) *TaxIncludedPriceJob {
 	return &TaxIncludedPriceJob{
 		TaxRate:     taxRate,
 		InputPrices: []float64{},
-		IOmanager:   fm,
+		IOmanager:   iom,
 	}
 }
 
