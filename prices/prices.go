@@ -26,13 +26,11 @@ func (job *TaxIncludedPriceJob) LoadData() error {
 
 	lines, err := job.IOmanager.ReadLines()
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
 	prices, err := conversion.StringsToFloat(lines)
 	if err != nil {
-		fmt.Println(err)
 		return err
 	}
 
@@ -40,8 +38,11 @@ func (job *TaxIncludedPriceJob) LoadData() error {
 	return nil
 }
 
-func (job *TaxIncludedPriceJob) Process() {
-	job.LoadData()
+func (job *TaxIncludedPriceJob) Process() error {
+	err := job.LoadData()
+	if err != nil {
+		return err
+	}
 
 	result := make(map[string]string)
 	for _, price := range job.InputPrices {
@@ -50,5 +51,5 @@ func (job *TaxIncludedPriceJob) Process() {
 	}
 
 	job.TaxIncludedPrices = result
-	job.IOmanager.WriteResult(job)
+	return job.IOmanager.WriteResult(job)
 }
