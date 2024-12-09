@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"os"
+	"time"
 )
 
 type FileManager struct {
@@ -49,6 +50,9 @@ func (fm FileManager) WriteResult(data any) error {
 		return errors.New(message)
 	}
 	defer file.Close()
+
+	// Process data - to simulate concurrency
+	time.Sleep(time.Second * 3)
 
 	encoder := json.NewEncoder(file)
 

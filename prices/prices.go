@@ -38,7 +38,7 @@ func (job *TaxIncludedPriceJob) LoadData() error {
 	return nil
 }
 
-func (job *TaxIncludedPriceJob) Process() error {
+func (job *TaxIncludedPriceJob) Process(doneChan chan bool) error {
 	err := job.LoadData()
 	if err != nil {
 		return err
@@ -51,5 +51,11 @@ func (job *TaxIncludedPriceJob) Process() error {
 	}
 
 	job.TaxIncludedPrices = result
-	return job.IOmanager.WriteResult(job)
+	err = job.IOmanager.WriteResult(job)
+	if err != nil {
+		return err
+	}
+
+	doneChan <- true
+	return nil
 }
